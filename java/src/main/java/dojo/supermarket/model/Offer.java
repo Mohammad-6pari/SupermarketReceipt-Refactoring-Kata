@@ -13,32 +13,30 @@ public class Offer {
     }
     public Discount handleDiscount(double quantity , double unitPrice){
         int quantityAsInt = (int) quantity;
-        int boughtItems = 1;
-        if (this.offerType == SpecialOfferType.THREE_FOR_TWO) {
-            boughtItems = 3;
-
-        } else if (this.offerType == SpecialOfferType.TWO_FOR_AMOUNT) {
-            boughtItems = 2;
-            if (quantityAsInt >= boughtItems) {
-                double total = this.argument * (quantityAsInt / boughtItems) + quantityAsInt % boughtItems * unitPrice;
-                double discountN = unitPrice * quantity - total;
-                return new Discount(product, boughtItems+" for " + this.argument, -discountN);
-            }
-
-        } if (this.offerType == SpecialOfferType.FIVE_FOR_AMOUNT) {
-            boughtItems = 5;
-        }
-        int numOfBoughtItems = quantityAsInt / boughtItems;
-        if (this.offerType == SpecialOfferType.THREE_FOR_TWO && quantityAsInt >= boughtItems) {
-            double discountAmount = quantity * unitPrice - ((numOfBoughtItems * 2 * unitPrice) + quantityAsInt % boughtItems * unitPrice);
-            return new Discount(product, boughtItems+" for 2", -discountAmount);
-        }
+        int numOfBoughtItems = 1;
+        int quantityBoughtRatio = quantityAsInt / numOfBoughtItems;
         if (this.offerType == SpecialOfferType.TEN_PERCENT_DISCOUNT) {
             return new Discount(product, this.argument + "% off", -quantity * unitPrice * this.argument / 100);
         }
-        if (this.offerType == SpecialOfferType.FIVE_FOR_AMOUNT && quantityAsInt >= boughtItems) {
-            double discountTotal = unitPrice * quantity - (this.argument * numOfBoughtItems + quantityAsInt % boughtItems * unitPrice);
-            return new Discount(product, boughtItems + " for " + this.argument, -discountTotal);
+        else {
+            double offerAmount = this.argument;
+            double priceCoef = unitPrice;
+            if (this.offerType == SpecialOfferType.THREE_FOR_TWO) {
+                numOfBoughtItems = 3;
+                offerAmount = 2;
+            }
+            else if (this.offerType == SpecialOfferType.TWO_FOR_AMOUNT) {
+                numOfBoughtItems = 2;
+                priceCoef = 1;
+            }
+            else if (this.offerType == SpecialOfferType.FIVE_FOR_AMOUNT) {
+                numOfBoughtItems = 5;
+                priceCoef = 1;
+            }
+            if (quantityAsInt >= numOfBoughtItems) {
+                double discountTotal = unitPrice * quantity - (offerAmount * quantityBoughtRatio * priceCoef + quantityAsInt % numOfBoughtItems * unitPrice);
+                return new Discount(product, numOfBoughtItems + " for " + offerAmount, -discountTotal);
+            }
         }
         return null;
 

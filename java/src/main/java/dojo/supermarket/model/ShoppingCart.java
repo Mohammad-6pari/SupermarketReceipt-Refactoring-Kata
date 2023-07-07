@@ -38,35 +38,7 @@ public class ShoppingCart {
             if (offers.containsKey(product)) {
                 Offer offer = offers.get(product);
                 double unitPrice = catalog.getUnitPrice(product);
-                int quantityAsInt = (int) quantity;
-                Discount discount = null;
-                int numOfBoughtItems = 1;
-                if (offer.offerType == SpecialOfferType.THREE_FOR_TWO) {
-                    numOfBoughtItems = 3;
-
-                } else if (offer.offerType == SpecialOfferType.TWO_FOR_AMOUNT) {
-                    numOfBoughtItems = 2;
-                    if (quantityAsInt >= numOfBoughtItems) {
-                        double total = offer.argument * (quantityAsInt / numOfBoughtItems) + quantityAsInt % numOfBoughtItems * unitPrice;
-                        double discountN = unitPrice * quantity - total;
-                        discount = new Discount(product, numOfBoughtItems+" for " + offer.argument, -discountN);
-                    }
-
-                } if (offer.offerType == SpecialOfferType.FIVE_FOR_AMOUNT) {
-                    numOfBoughtItems = 5;
-                }
-                int numberOfXs = quantityAsInt / numOfBoughtItems;
-                if (offer.offerType == SpecialOfferType.THREE_FOR_TWO && quantityAsInt >= numOfBoughtItems) {
-                    double discountAmount = quantity * unitPrice - ((numberOfXs * 2 * unitPrice) + quantityAsInt % numOfBoughtItems * unitPrice);
-                    discount = new Discount(product, numOfBoughtItems+" for 2", -discountAmount);
-                }
-                if (offer.offerType == SpecialOfferType.TEN_PERCENT_DISCOUNT) {
-                    discount = new Discount(product, offer.argument + "% off", -quantity * unitPrice * offer.argument / 100);
-                }
-                if (offer.offerType == SpecialOfferType.FIVE_FOR_AMOUNT && quantityAsInt >= numOfBoughtItems) {
-                    double discountTotal = unitPrice * quantity - (offer.argument * numberOfXs + quantityAsInt % numOfBoughtItems * unitPrice);
-                    discount = new Discount(product, numOfBoughtItems + " for " + offer.argument, -discountTotal);
-                }
+                Discount discount = offer.handleDiscount(quantity,unitPrice);
                 if (discount != null)
                     receipt.addDiscount(discount);
             }

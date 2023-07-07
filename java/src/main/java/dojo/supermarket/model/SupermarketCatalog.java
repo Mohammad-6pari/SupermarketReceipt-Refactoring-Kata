@@ -1,8 +1,18 @@
 package dojo.supermarket.model;
 
-public interface SupermarketCatalog {
+import java.util.HashMap;
+import java.util.Map;
 
-    void addProduct(Product product, double price);
+public class SupermarketCatalog {
+    private Map<String, Double> prices = new HashMap<>();
 
-    double getUnitPrice(Product product);
+    public void addProduct(Product product, double price) {
+        this.prices.put(product.getName(), price);
+    }
+
+    public double getUnitPrice(Product product) {
+        return this.prices.get(product.getName());
+    }
+
+
 }
